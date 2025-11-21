@@ -18,22 +18,18 @@ def render_structured_impact(md_text: str):
     100% backend content — NO additions or rewrites.
     """
 
-    # Split by Markdown headings or item labels
     sections = re.split(r"(###.*|####.*|\*\*Item:.*)", md_text)
-
     formatted = "# 📘 Impact Analysis\n\n---\n"
 
     i = 0
     while i < len(sections):
         part = sections[i].strip()
 
-        # Detect headings dynamically
         if (
             part.startswith("###")
             or part.startswith("####")
             or part.startswith("**Item:")
         ):
-            # Next chunk = section content
             content = sections[i + 1].strip() if i + 1 < len(sections) else ""
 
             title = (
@@ -63,6 +59,18 @@ def render_structured_impact(md_text: str):
 
 
 # ============================================================
+#  SAFE JSON PARSER (STOPS STREAMLIT CRASHES)
+# ============================================================
+
+def safe_json(response):
+    """Safely decode JSON or return raw text."""
+    try:
+        return response.json()
+    except:
+        return {"raw_response": response.text}
+
+
+# ============================================================
 #  SIDEBAR MENU
 # ============================================================
 
@@ -81,7 +89,6 @@ mode = st.sidebar.selectbox(
     ]
 )
 
-
 # ============================================================
 #  MOCK SUMMARY
 # ============================================================
@@ -90,7 +97,7 @@ if mode == "Summarize ECO (Mock)":
     eco_id = st.text_input("Enter ECO ID", "1001")
     if st.button("Summarize"):
         r = requests.get(f"{API_BASE}/eco/{eco_id}/summarize")
-        st.json(r.json())
+        st.json(safe_json(r))
 
 
 # ============================================================
@@ -101,7 +108,7 @@ if mode == "Impact Analysis (Mock)":
     eco_id = st.text_input("Enter ECO ID", "1001")
     if st.button("Analyze Impact"):
         r = requests.get(f"{API_BASE}/eco/{eco_id}/impact")
-        data = r.json()
+        data = safe_json(r)
         raw_md = data.get("impact_analysis", "")
         st.markdown(render_structured_impact(raw_md), unsafe_allow_html=True)
 
@@ -124,7 +131,7 @@ if mode == "Create ECO (TC)":
             }
         }
         r = requests.post(f"{API_BASE}/tc/eco/create", json=payload)
-        st.json(r.json())
+        st.json(safe_json(r))
 
 
 # ============================================================
@@ -135,7 +142,7 @@ if mode == "Get ECO (TC)":
     uid = st.text_input("Enter ECO UID")
     if st.button("Fetch Details"):
         r = requests.get(f"{API_BASE}/tc/eco/{uid}")
-        st.json(r.json())
+        st.json(safe_json(r))
 
 
 # ============================================================
@@ -147,8 +154,11 @@ if mode == "Update Status (TC)":
     action = st.selectbox("Action", ["Promote", "Demote"])
 
     if st.button("Update Status"):
-        r = requests.post(f"{API_BASE}/tc/eco/{uid}/status", params={"action": action})
-        st.json(r.json())
+        r = requests.post(
+            f"{API_BASE}/tc/eco/{uid}/status",
+            params={"action": action}
+        )
+        st.json(safe_json(r))
 
 
 # ============================================================
@@ -160,8 +170,10 @@ if mode == "Add Impacted Item (TC)":
     item_uid = st.text_input("Item UID")
 
     if st.button("Add Item"):
-        r = requests.post(f"{API_BASE}/tc/eco/{eco_uid}/add_item/{item_uid}")
-        st.json(r.json())
+        r = requests.post(
+            f"{API_BASE}/tc/eco/{eco_uid}/add_item/{item_uid}"
+        )
+        st.json(safe_json(r))
 
 
 # ============================================================
@@ -173,8 +185,10 @@ if mode == "Remove Impacted Item (TC)":
     item_uid = st.text_input("Item UID")
 
     if st.button("Remove Item"):
-        r = requests.post(f"{API_BASE}/tc/eco/{eco_uid}/remove_item/{item_uid}")
-        st.json(r.json())
+        r = requests.post(
+            f"{API_BASE}/tc/eco/{eco_uid}/remove_item/{item_uid}"
+        )
+        st.json(safe_json(r))
 
 
 # ============================================================
@@ -188,4 +202,4 @@ if mode == "Attach File (TC)":
     if st.button("Attach") and file:
         files = {"file": (file.name, file.getvalue())}
         r = requests.post(f"{API_BASE}/tc/eco/{eco_uid}/attach", files=files)
-        st.json(r.json())
+        st.json(safe_json(r))
