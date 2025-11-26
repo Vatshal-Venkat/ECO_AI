@@ -13,7 +13,7 @@ API_BASE = "http://127.0.0.1:8000"
 # ------------------------------------------------------
 st.set_page_config(
     page_title="ECO AI Assistant",
-    page_icon="👑",
+    page_icon=":::",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -150,7 +150,7 @@ st.markdown("""
 # ------------------------------------------------------
 st.markdown("""
 <div class="header-title">
-    ECO AI Assistant 👑
+    ECO AI Assistant :::
 </div>
 <div class="header-sub">
     Royal Premium Edition • Teamcenter ECO Intelligence Dashboard
@@ -323,8 +323,8 @@ with tabs[4]:
     ])
 
     chart = alt.Chart(chart_data).mark_arc(innerRadius=45).encode(
-        theta="count:Q",
-        color="impact:N",
+        color=alt.Color("impact:N", type="nominal"),
+        theta=alt.Theta("count:Q", type="quantitative"),
         tooltip=["impact","count"]
     )
 
