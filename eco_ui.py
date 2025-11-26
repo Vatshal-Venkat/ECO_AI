@@ -1,3 +1,4 @@
+# eco_ui.py — Royal Premium Dashboard Edition
 import streamlit as st
 import requests
 import json
@@ -7,7 +8,9 @@ from datetime import datetime
 
 API_BASE = "http://127.0.0.1:8000"
 
-# ---------------- Page config ----------------
+# ------------------------------------------------------
+#                  PAGE CONFIG
+# ------------------------------------------------------
 st.set_page_config(
     page_title="ECO AI Assistant",
     page_icon="👑",
@@ -15,182 +18,184 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --------------------------------------------------
-#       ROYAL PREMIUM DARK LUXURY THEME CSS
-# --------------------------------------------------
+# ------------------------------------------------------
+#            ROYAL PREMIUM DARK THEME CSS
+# ------------------------------------------------------
 st.markdown("""
 <style>
 
     /* Global background */
     .stApp {
-        background: linear-gradient(180deg, #0b0e14 0%, #0a0c12 60%, #05070a 100%) !important;
-        color: #E3E6EB !important;
+        background: linear-gradient(180deg, #0a0c12 0%, #05070a 100%) !important;
+        color: #EAEAEA !important;
     }
 
     /* Sidebar */
     [data-testid="stSidebar"] {
-        background: #0c0e13 !important;
-        border-right: 1px solid #1b1e24 !important;
+        background: #0d1017 !important;
+        border-right: 1px solid rgba(212,175,55,0.18) !important;
+        padding-top: 20px;
     }
 
-    /* Sidebar menu items */
-    section[data-testid="stSidebar"] .css-1d391kg, 
-    section[data-testid="stSidebar"] .css-14xtw13 {
+    /* Sidebar Text */
+    [data-testid="stSidebar"] p, 
+    [data-testid="stSidebar"] span {
         color: #D4AF37 !important;
-        font-weight: 600 !important;
+        font-size: 15px !important;
     }
 
-    /* Gold hover */
+    /* Sidebar Hover Glow */
     [data-testid="stSidebar"] .css-1d391kg:hover {
-        color: #f5d56e !important;
+        color: #f6d46e !important;
+        text-shadow: 0px 0px 6px rgba(212,175,55,0.6);
     }
 
-    /* Header Title */
-    .dashboard-header {
-        font-size: 32px;
-        font-weight: 800;
+    /* Main Header */
+    .header-title {
+        font-size: 40px;
+        font-weight: 900;
         color: #D4AF37;
         letter-spacing: 1px;
         text-shadow: 0px 0px 12px rgba(212,175,55,0.45);
-        animation: fadein 1s ease-out;
+        animation: fadein 1.2s ease-out;
     }
 
-    /* Subtitles */
-    .subtext {
-        color: #8892a0;
-        font-size: 14px;
-        margin-top: -18px;
-        padding-left: 2px;
+    .header-sub {
+        margin-top: -10px;
+        font-size: 15px;
+        color: #8C93A1;
     }
 
     /* KPI Cards */
     .kpi-card {
-        background: rgba(255,255,255,0.04);
+        background: rgba(255,255,255,0.05);
         border: 1px solid rgba(212,175,55,0.25);
         backdrop-filter: blur(8px);
         border-radius: 14px;
-        padding: 18px;
+        padding: 22px;
         transition: 0.25s ease;
-        box-shadow: 0px 0px 10px rgba(0,0,0,0.20);
+        box-shadow: 0px 0px 8px rgba(0,0,0,0.25);
     }
+
     .kpi-card:hover {
-        border: 1px solid rgba(212,175,55,0.55);
-        transform: translateY(-4px);
-        box-shadow: 0px 0px 18px rgba(212,175,55,0.20);
+        border-color: rgba(212,175,55,0.60);
+        transform: translateY(-5px);
+        box-shadow: 0px 0px 14px rgba(212,175,55,0.35);
     }
 
     .kpi-title {
+        font-size: 13px;
         color: #D4AF37;
-        font-size: 14px;
         font-weight: 700;
-        letter-spacing: 0.5px;
     }
-
     .kpi-value {
-        color: #ffffff;
-        font-size: 28px;
+        font-size: 30px;
         font-weight: 800;
-        margin-top: -6px;
+        margin-top: -4px;
+        color: #FFFFFF;
     }
 
-    /* Premium Cards */
+    /* Card Container */
     .card {
-        background: rgba(255,255,255,0.03);
+        background: rgba(255,255,255,0.04);
         backdrop-filter: blur(6px);
-        border-radius: 14px;
-        padding: 22px;
+        border-radius: 16px;
+        padding: 25px;
         border: 1px solid rgba(255,255,255,0.08);
-        transition: 0.3s ease;
-        margin-bottom: 18px;
+        transition: 0.28s ease;
+        margin-bottom: 22px;
     }
-
     .card:hover {
-        border: 1px solid rgba(212,175,55,0.4);
-        box-shadow: 0px 0px 16px rgba(212,175,55,0.16);
+        border: 1px solid rgba(212,175,55,0.45);
+        box-shadow: 0px 0px 16px rgba(212,175,55,0.18);
         transform: translateY(-4px);
     }
 
     /* Buttons */
     .stButton > button {
-        background: linear-gradient(90deg, #D4AF37 0%, #b89327 100%);
-        color: black !important;
-        border-radius: 10px;
-        padding: 8px 20px;
+        background: linear-gradient(90deg, #D4AF37 0%, #b8922c 100%);
+        color: #0a0a0a !important;
+        border-radius: 12px;
+        padding: 10px 20px;
         border: none;
+        font-size: 15px;
         font-weight: 700;
         transition: 0.25s;
     }
     .stButton > button:hover {
-        background: linear-gradient(90deg, #f2d17b 0%, #c7a545 100%);
-        transform: translateY(-2px);
+        background: linear-gradient(90deg, #f4d98c 0%, #d0a747 100%);
+        transform: translateY(-3px);
+        box-shadow: 0px 0px 12px rgba(212,175,55,0.4);
     }
 
-    /* File uploader */
+    /* File Upload */
     [data-testid="stFileUploadDropzone"] {
         background: rgba(255,255,255,0.03);
         border: 2px dashed #D4AF37;
-        border-radius: 12px;
+        border-radius: 14px;
     }
 
     details summary {
-        font-size: 15px;
         color: #D4AF37;
-        font-weight: 700;
+        font-size: 15px;
         cursor: pointer;
+        font-weight: 700;
     }
 
 </style>
 """, unsafe_allow_html=True)
 
-
-# --------------------------------------------------
-#                 PAGE HEADER
-# --------------------------------------------------
+# ------------------------------------------------------
+#                      HEADER
+# ------------------------------------------------------
 st.markdown("""
-<div class="dashboard-header">ECO AI Assistant 👑</div>
-<div class="subtext">Royal Premium Edition — Engineering Change Intelligence Dashboard</div>
+<div class="header-title">
+    ECO AI Assistant 👑
+</div>
+<div class="header-sub">
+    Royal Premium Edition • Teamcenter ECO Intelligence Dashboard
+</div>
 <br>
 """, unsafe_allow_html=True)
 
 
+# ------------------------------------------------------
+#                      KPI ROW
+# ------------------------------------------------------
+c1, c2, c3, c4 = st.columns(4)
 
-# --------------------------------------------------
-#              KPI CARDS ROW
-# --------------------------------------------------
-k1, k2, k3, k4 = st.columns(4)
-
-with k1:
+with c1:
     st.markdown('<div class="kpi-card">', unsafe_allow_html=True)
-    st.markdown('<div class="kpi-title">ECOs Processed</div>', unsafe_allow_html=True)
+    st.markdown('<div class="kpi-title">Total ECOs Processed</div>', unsafe_allow_html=True)
     st.markdown('<div class="kpi-value">128</div>', unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-with k2:
+with c2:
     st.markdown('<div class="kpi-card">', unsafe_allow_html=True)
     st.markdown('<div class="kpi-title">High Impact Items</div>', unsafe_allow_html=True)
     st.markdown('<div class="kpi-value">42</div>', unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-with k3:
+with c3:
     st.markdown('<div class="kpi-card">', unsafe_allow_html=True)
     st.markdown('<div class="kpi-title">Pending Updates</div>', unsafe_allow_html=True)
     st.markdown('<div class="kpi-value">17</div>', unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-with k4:
+with c4:
     st.markdown('<div class="kpi-card">', unsafe_allow_html=True)
-    st.markdown('<div class="kpi-title">Attachments</div>', unsafe_allow_html=True)
+    st.markdown('<div class="kpi-title">Total Attachments</div>', unsafe_allow_html=True)
     st.markdown('<div class="kpi-value">63</div>', unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
-
-# --------------------------------------------------
-#               MAIN TABS (Summary / Impact)
-# --------------------------------------------------
+# ------------------------------------------------------
+#            TABS (Summary / Impact / TC / Attach / Insights)
+# ------------------------------------------------------
 tabs = st.tabs(["📄 Summary", "📘 Impact", "🧩 Teamcenter", "📎 Attachments", "📊 Insights"])
 
-# ---------------- TAB 1: SUMMARY ----------------
+
+# ========================== TAB 1 ==========================
 with tabs[0]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("📄 ECO Summarizer")
@@ -200,105 +205,142 @@ with tabs[0]:
     if st.button("Generate Summary"):
         r = requests.get(f"{API_BASE}/eco/{eco_id}/summarize")
         try:
-            out = r.json()
-            st.success("Summary Generated")
-            st.write(out.get("summary", "No summary returned"))
+            d = r.json()
+            st.success("Summary Generated Successfully")
+            st.write(d.get("summary", "No summary returned"))
         except:
-            st.error("Invalid response")
-    st.markdown("</div>", unsafe_allow_html=True)
+            st.error("Invalid response from server.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
-
-# ---------------- TAB 2: IMPACT ----------------
+# ========================== TAB 2 ==========================
 with tabs[1]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("📘 Impact Analysis")
 
-    eco_id2 = st.text_input("ECO ID", "1001")
+    eco_id2 = st.text_input("ECO ID for Impact", "1001")
 
-    if st.button("Analyze Impact"):
+    if st.button("Run Impact Analysis"):
         r = requests.get(f"{API_BASE}/eco/{eco_id2}/impact")
         try:
             d = r.json()
             st.success("Impact Analysis Retrieved")
             st.write(d.get("impact_analysis", "No analysis returned"))
         except:
-            st.error("Invalid response")
-
-    st.markdown("</div>", unsafe_allow_html=True)
-
+            st.error("Invalid response from server.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
-# ---------------- TAB 3: TEAMCENTER ----------------
+# ========================== TAB 3 ==========================
 with tabs[2]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("🧩 Teamcenter Operations")
 
-    action = st.selectbox("Choose Action", [
-        "Create ECO",
-        "Get ECO Details",
-        "Update ECO Status",
-        "Add Impacted Item",
-        "Remove Impacted Item"
-    ])
+    left, right = st.columns([1.3, 1])
 
-    st.write("---")
-    st.write("### Action Panel")
+    with left:
+        tc_action = st.radio("Select Action", [
+            "Create ECO",
+            "Get ECO Details",
+            "Update ECO Status",
+            "Add Impacted Item",
+            "Remove Impacted Item"
+        ])
 
-    # (Same logic as your previous file — not removing functionality)
-    # Add TC actions here similar to your existing code…
+        if tc_action == "Create ECO":
+            title = st.text_input("ECO Title")
+            desc = st.text_area("ECO Description")
+            if st.button("Create"):
+                r = requests.post(f"{API_BASE}/tc/eco/create", json={
+                    "clientId": "UI_ECO_CREATE",
+                    "className": "ChangeNoticeRevision",
+                    "properties": {"object_name": title, "object_desc": desc}
+                })
+                st.session_state["log"] = r.json()
 
-    st.markdown("</div>", unsafe_allow_html=True)
+        elif tc_action == "Get ECO Details":
+            uid = st.text_input("ECO UID")
+            if st.button("Fetch"):
+                r = requests.get(f"{API_BASE}/tc/eco/{uid}")
+                st.session_state["log"] = r.json()
+
+        elif tc_action == "Update ECO Status":
+            uid = st.text_input("ECO UID")
+            act = st.selectbox("Action", ["Promote", "Demote"])
+            if st.button("Update"):
+                r = requests.post(f"{API_BASE}/tc/eco/{uid}/status", params={"action": act})
+                st.session_state["log"] = r.json()
+
+        elif tc_action == "Add Impacted Item":
+            uid = st.text_input("ECO UID")
+            item = st.text_input("Item UID")
+            if st.button("Add"):
+                r = requests.post(f"{API_BASE}/tc/eco/{uid}/add_item/{item}")
+                st.session_state["log"] = r.json()
+
+        elif tc_action == "Remove Impacted Item":
+            uid = st.text_input("ECO UID")
+            item = st.text_input("Item UID")
+            if st.button("Remove"):
+                r = requests.post(f"{API_BASE}/tc/eco/{uid}/remove_item/{item}")
+                st.session_state["log"] = r.json()
+
+    with right:
+        st.markdown("### Live Response / Logs")
+        if "log" in st.session_state:
+            st.json(st.session_state["log"])
+        else:
+            st.info("No actions yet.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
-
-# ---------------- TAB 4: ATTACHMENTS ----------------
+# ========================== TAB 4 ==========================
 with tabs[3]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("📎 Attach Files")
 
-    uploaded = st.file_uploader("Upload file")
+    eco_uid = st.text_input("ECO UID")
+    file = st.file_uploader("Upload File")
 
     if st.button("Upload"):
-        st.success("Uploaded (Mock)")
+        if eco_uid and file:
+            st.success("Uploaded successfully (mock).")
+        else:
+            st.error("ECO UID and file required.")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
-
-# ---------------- TAB 5: INSIGHTS ----------------
+# ========================== TAB 5 ==========================
 with tabs[4]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("📊 Insights & Analytics")
 
-    # Placeholder chart
-    st.write("Impact Distribution Chart")
     chart_data = alt.Data(values=[
-        {"impact": "High", "count": 10},
-        {"impact": "Medium", "count": 22},
-        {"impact": "Low", "count": 16}
+        {"impact": "High", "count": 12},
+        {"impact": "Medium", "count": 21},
+        {"impact": "Low", "count": 8}
     ])
 
-    chart = alt.Chart(chart_data).mark_arc(innerRadius=50).encode(
+    chart = alt.Chart(chart_data).mark_arc(innerRadius=45).encode(
         theta="count:Q",
         color="impact:N",
-        tooltip=["impact", "count"]
+        tooltip=["impact","count"]
     )
+
     st.altair_chart(chart)
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
-
-# --------------------------------------------------
-#                     FOOTER
-# --------------------------------------------------
+# ------------------------------------------------------
+#                       FOOTER
+# ------------------------------------------------------
 st.markdown("""
-<br><br>
+<br>
 <center>
-<span style="color:#777; font-size:13px;">
-ECO AI Assistant — Royal Premium Dashboard Edition
+<span style="color:#666; font-size:12px;">
+ECO AI Assistant — Royal Premium Dashboard © 2025
 </span>
 </center>
-<br>
 """, unsafe_allow_html=True)
