@@ -1,4 +1,5 @@
-# eco_ui.py — Royal Premium Dashboard Edition (Final + Chart Fix)
+# eco_ui.py — Royal Premium Dashboard Edition (Final With Floating Glass Tabs + Chart Fix)
+
 import streamlit as st
 import requests
 import json
@@ -9,15 +10,17 @@ from datetime import datetime
 
 API_BASE = "http://127.0.0.1:8000"
 
+
 # ------------------------------------------------------
 #                  PAGE CONFIG
 # ------------------------------------------------------
 st.set_page_config(
     page_title="ECO AI Assistant",
-    page_icon="|||",
+    page_icon="👑",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
 
 # ------------------------------------------------------
 #            ROYAL PREMIUM DARK THEME CSS
@@ -28,7 +31,6 @@ st.markdown("""
     /* Global background */
     .stApp {
         background: linear-gradient(180deg, #0a0c12 0%, #05070a 100%) !important;
-        color: #EAEAEA !important;
     }
 
     /* Sidebar */
@@ -37,15 +39,11 @@ st.markdown("""
         border-right: 1px solid rgba(212,175,55,0.18) !important;
         padding-top: 20px;
     }
-
-    /* Sidebar Text */
     [data-testid="stSidebar"] p, 
     [data-testid="stSidebar"] span {
         color: #D4AF37 !important;
         font-size: 15px !important;
     }
-
-    /* Sidebar Hover Glow */
     [data-testid="stSidebar"] .css-1d391kg:hover {
         color: #f6d46e !important;
         text-shadow: 0px 0px 6px rgba(212,175,55,0.6);
@@ -56,16 +54,16 @@ st.markdown("""
         font-size: 40px;
         font-weight: 900;
         color: #D4AF37;
-        letter-spacing: 1px;
         text-shadow: 0px 0px 12px rgba(212,175,55,0.45);
         animation: fadein 1.2s ease-out;
+        letter-spacing: 1px;
     }
-
     .header-sub {
         margin-top: -10px;
         font-size: 15px;
         color: #8C93A1;
     }
+
 
     /* KPI Cards */
     .kpi-card {
@@ -75,15 +73,12 @@ st.markdown("""
         border-radius: 14px;
         padding: 22px;
         transition: 0.25s ease;
-        box-shadow: 0px 0px 8px rgba(0,0,0,0.25);
     }
-
     .kpi-card:hover {
         border-color: rgba(212,175,55,0.60);
-        transform: translateY(-5px);
-        box-shadow: 0px 0px 14px rgba(212,175,55,0.35);
+        transform: translateY(-4px);
+        box-shadow: 0px 0px 12px rgba(212,175,55,0.35);
     }
-
     .kpi-title {
         font-size: 13px;
         color: #D4AF37;
@@ -92,69 +87,107 @@ st.markdown("""
     .kpi-value {
         font-size: 30px;
         font-weight: 800;
-        margin-top: -4px;
         color: #FFFFFF;
+        margin-top: -6px;
     }
+
 
     /* Card Container */
     .card {
         background: rgba(255,255,255,0.04);
-        backdrop-filter: blur(6px);
         border-radius: 16px;
         padding: 25px;
         border: 1px solid rgba(255,255,255,0.08);
+        backdrop-filter: blur(6px);
         transition: 0.28s ease;
         margin-bottom: 22px;
     }
     .card:hover {
         border: 1px solid rgba(212,175,55,0.45);
-        box-shadow: 0px 0px 16px rgba(212,175,55,0.18);
-        transform: translateY(-4px);
+        box-shadow: 0px 0px 20px rgba(212,175,55,0.20);
+        transform: translateY(-5px);
     }
+
 
     /* Buttons */
     .stButton > button {
         background: linear-gradient(90deg, #D4AF37 0%, #b8922c 100%);
-        color: #0a0a0a !important;
         border-radius: 12px;
         padding: 10px 20px;
         border: none;
         font-size: 15px;
         font-weight: 700;
         transition: 0.25s;
+        color: #000 !important;
     }
     .stButton > button:hover {
         background: linear-gradient(90deg, #f4d98c 0%, #d0a747 100%);
         transform: translateY(-3px);
-        box-shadow: 0px 0px 12px rgba(212,175,55,0.4);
+        box-shadow: 0px 0px 12px rgba(212,175,55,0.40);
     }
 
-    /* File Upload */
+
+    /* FILE UPLOADER */
     [data-testid="stFileUploadDropzone"] {
         background: rgba(255,255,255,0.03);
         border: 2px dashed #D4AF37;
         border-radius: 14px;
     }
 
-    details summary {
-        color: #D4AF37;
-        font-size: 15px;
-        cursor: pointer;
-        font-weight: 700;
+
+    /* -------------------------------------------------- */
+    /*         FLOATING GLASS TABS (Royal Premium)        */
+    /* -------------------------------------------------- */
+
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 18px !important;
+        padding: 8px !important;
+        margin-bottom: 18px !important;
+        justify-content: flex-start !important;
+        border-bottom: none !important;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(12px);
+        padding: 10px 20px !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #dcdcdc !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        transition: all 0.25s ease;
+    }
+
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #D4AF37 !important;
+        border-color: rgba(212,175,55,0.45);
+        box-shadow: 0px 0px 8px rgba(212,175,55,0.25);
+        transform: translateY(-3px);
+    }
+
+    .stTabs [aria-selected="true"] {
+        color: #D4AF37 !important;
+        background: rgba(212,175,55,0.08) !important;
+        border: 1px solid rgba(212,175,55,0.45) !important;
+        box-shadow: 0px 0px 16px rgba(212,175,55,0.35);
+        font-weight: 800 !important;
+        transform: translateY(-3px);
     }
 
 </style>
 """, unsafe_allow_html=True)
+
 
 # ------------------------------------------------------
 #                      HEADER
 # ------------------------------------------------------
 st.markdown("""
 <div class="header-title">
-    ECO AI Assistant |||
+    ECO AI Assistant
 </div>
 <div class="header-sub">
-    Teamcenter ECO Intelligence Dashboard
+    Teamcenter ECO Intelligence Dashboard 
 </div>
 <br>
 """, unsafe_allow_html=True)
@@ -193,15 +226,16 @@ with c4:
 
 
 # ------------------------------------------------------
-#            TABS (Summary / Impact / TC / Attach / Insights)
+#                      TABS
 # ------------------------------------------------------
-tabs = st.tabs(["📄 Summary", "📘 Impact", "🧩 Teamcenter", "📎 Attachments", "📊 Insights"])
+tabs = st.tabs(["Summary", "Impact", "Teamcenter", "Attachments", "Insights"])
+
 
 
 # ========================== TAB 1 ==========================
 with tabs[0]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("📄 ECO Summarizer")
+    st.subheader("ECO Summarizer")
 
     eco_id = st.text_input("Enter ECO ID", "1001")
 
@@ -220,7 +254,7 @@ with tabs[0]:
 # ========================== TAB 2 ==========================
 with tabs[1]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("📘 Impact Analysis")
+    st.subheader("Impact Analysis")
 
     eco_id2 = st.text_input("ECO ID for Impact", "1001")
 
@@ -239,7 +273,7 @@ with tabs[1]:
 # ========================== TAB 3 ==========================
 with tabs[2]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("🧩 Teamcenter Operations")
+    st.subheader("Teamcenter Operations")
 
     left, right = st.columns([1.3, 1])
 
@@ -256,11 +290,14 @@ with tabs[2]:
             title = st.text_input("ECO Title")
             desc = st.text_area("ECO Description")
             if st.button("Create"):
-                r = requests.post(f"{API_BASE}/tc/eco/create", json={
-                    "clientId": "UI_ECO_CREATE",
-                    "className": "ChangeNoticeRevision",
-                    "properties": {"object_name": title, "object_desc": desc}
-                })
+                r = requests.post(
+                    f"{API_BASE}/tc/eco/create",
+                    json={
+                        "clientId": "UI_ECO_CREATE",
+                        "className": "ChangeNoticeRevision",
+                        "properties": {"object_name": title, "object_desc": desc}
+                    }
+                )
                 st.session_state["log"] = r.json()
 
         elif tc_action == "Get ECO Details":
@@ -296,6 +333,7 @@ with tabs[2]:
             st.json(st.session_state["log"])
         else:
             st.info("No actions yet.")
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -303,7 +341,7 @@ with tabs[2]:
 # ========================== TAB 4 ==========================
 with tabs[3]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("📎 Attach Files")
+    st.subheader("Attach Files")
 
     eco_uid = st.text_input("ECO UID")
     file = st.file_uploader("Upload File")
@@ -321,9 +359,8 @@ with tabs[3]:
 # ========================== TAB 5 ==========================
 with tabs[4]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("📊 Insights & Analytics")
+    st.subheader("Insights & Analytics")
 
-    # ---- FIXED CHART (NO ERRORS) ----
     df = pd.DataFrame([
         {"impact": "High", "count": 12},
         {"impact": "Medium", "count": 21},
