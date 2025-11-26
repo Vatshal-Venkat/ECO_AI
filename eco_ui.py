@@ -291,19 +291,45 @@ with tabs[2]:
             "Remove Impacted Item"
         ])
 
+        # -------------------- CREATE ECO (Premium UI) --------------------
         if tc_action == "Create ECO":
-            title = st.text_input("ECO Title")
-            desc = st.text_area("ECO Description")
-            if st.button("Create"):
-                r = requests.post(
-                    f"{API_BASE}/tc/eco/create",
-                    json={
+            st.markdown('<div class="card">', unsafe_allow_html=True)
+            st.subheader("Create New ECO")
+
+            tc_title = st.text_input("ECO Title", placeholder="Enter ECO title…")
+            tc_desc = st.text_area("ECO Description", placeholder="Describe the engineering change…")
+
+            if st.button("Create ECO", key="create_eco_btn"):
+                if not tc_title.strip():
+                    st.error("ECO Title cannot be empty.")
+                else:
+                    payload = {
                         "clientId": "UI_ECO_CREATE",
                         "className": "ChangeNoticeRevision",
-                        "properties": {"object_name": title, "object_desc": desc}
+                        "properties": {
+                            "object_name": tc_title,
+                            "object_desc": tc_desc
+                        }
                     }
-                )
-                st.session_state["log"] = r.json()
+
+                    with st.spinner("Creating ECO…"):
+                        response = requests.post(f"{API_BASE}/tc/eco/create", json=payload)
+
+                    try:
+                        out = response.json()
+                        st.session_state["log"] = out
+        
+                        eco_uid = out.get("eco_uid") or out.get("uid") or out.get("id")
+
+                        st.success(f"🎉 ECO Created Successfully! UID: {eco_uid}")
+                        st.json(out)
+
+                    except Exception:
+                        st.error("❌ Server returned unexpected response:")
+                        st.code(response.text)
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
 
         elif tc_action == "Get ECO Details":
             uid = st.text_input("ECO UID")
