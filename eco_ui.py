@@ -1,8 +1,9 @@
-# eco_ui.py — Royal Premium Dashboard Edition
+# eco_ui.py — Royal Premium Dashboard Edition (Final + Chart Fix)
 import streamlit as st
 import requests
 import json
 import altair as alt
+import pandas as pd
 from typing import List, Dict
 from datetime import datetime
 
@@ -13,7 +14,7 @@ API_BASE = "http://127.0.0.1:8000"
 # ------------------------------------------------------
 st.set_page_config(
     page_title="ECO AI Assistant",
-    page_icon=":::",
+    page_icon="|||",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -150,13 +151,14 @@ st.markdown("""
 # ------------------------------------------------------
 st.markdown("""
 <div class="header-title">
-    ECO AI Assistant :::
+    ECO AI Assistant |||
 </div>
 <div class="header-sub">
-    Royal Premium Edition • Teamcenter ECO Intelligence Dashboard
+    Teamcenter ECO Intelligence Dashboard
 </div>
 <br>
 """, unsafe_allow_html=True)
+
 
 
 # ------------------------------------------------------
@@ -189,6 +191,7 @@ with c4:
     st.markdown('</div>', unsafe_allow_html=True)
 
 
+
 # ------------------------------------------------------
 #            TABS (Summary / Impact / TC / Attach / Insights)
 # ------------------------------------------------------
@@ -213,6 +216,7 @@ with tabs[0]:
     st.markdown('</div>', unsafe_allow_html=True)
 
 
+
 # ========================== TAB 2 ==========================
 with tabs[1]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -229,6 +233,7 @@ with tabs[1]:
         except:
             st.error("Invalid response from server.")
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 # ========================== TAB 3 ==========================
@@ -294,6 +299,7 @@ with tabs[2]:
     st.markdown('</div>', unsafe_allow_html=True)
 
 
+
 # ========================== TAB 4 ==========================
 with tabs[3]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -311,26 +317,34 @@ with tabs[3]:
     st.markdown('</div>', unsafe_allow_html=True)
 
 
+
 # ========================== TAB 5 ==========================
 with tabs[4]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("📊 Insights & Analytics")
 
-    chart_data = alt.Data(values=[
+    # ---- FIXED CHART (NO ERRORS) ----
+    df = pd.DataFrame([
         {"impact": "High", "count": 12},
         {"impact": "Medium", "count": 21},
         {"impact": "Low", "count": 8}
     ])
 
-    chart = alt.Chart(chart_data).mark_arc(innerRadius=45).encode(
-        color=alt.Color("impact:N", type="nominal"),
-        theta=alt.Theta("count:Q", type="quantitative"),
-        tooltip=["impact","count"]
+    chart = (
+        alt.Chart(df)
+        .mark_arc(innerRadius=50)
+        .encode(
+            theta=alt.Theta("count:Q"),
+            color=alt.Color("impact:N"),
+            tooltip=["impact", "count"]
+        )
+        .properties(width=360, height=360)
     )
 
-    st.altair_chart(chart)
+    st.altair_chart(chart, use_container_width=False)
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 # ------------------------------------------------------
