@@ -1,4 +1,4 @@
-# eco_ui.py — Royal Premium Dashboard Edition (Final With Floating Glass Tabs + Chart Fix)
+# eco_ui.py — Royal Premium Dashboard Edition (Updated With Themed Insights Chart + Floating Tabs)
 
 import streamlit as st
 import requests
@@ -7,6 +7,18 @@ import altair as alt
 import pandas as pd
 from typing import List, Dict
 from datetime import datetime
+import streamlit.components.v1 as components
+from eco_insights_utils import (
+    get_impact_counts_from_api,
+    compute_weighted_risk,
+    render_multi_ring_svg,
+    render_progress_gauge,     # ← THIS ONE WAS MISSING
+    bar_chart_counts,
+    donut_chart,
+    THEME
+)
+
+
 
 API_BASE = "http://127.0.0.1:8000"
 
@@ -64,7 +76,6 @@ st.markdown("""
         color: #8C93A1;
     }
 
-
     /* KPI Cards */
     .kpi-card {
         background: rgba(255,255,255,0.05);
@@ -91,7 +102,6 @@ st.markdown("""
         margin-top: -6px;
     }
 
-
     /* Card Container */
     .card {
         background: rgba(255,255,255,0.04);
@@ -107,7 +117,6 @@ st.markdown("""
         box-shadow: 0px 0px 20px rgba(212,175,55,0.20);
         transform: translateY(-5px);
     }
-
 
     /* Buttons */
     .stButton > button {
@@ -126,24 +135,18 @@ st.markdown("""
         box-shadow: 0px 0px 12px rgba(212,175,55,0.40);
     }
 
-
-    /* FILE UPLOADER */
+    /* File Upload */
     [data-testid="stFileUploadDropzone"] {
         background: rgba(255,255,255,0.03);
         border: 2px dashed #D4AF37;
         border-radius: 14px;
     }
 
-
-    /* -------------------------------------------------- */
-    /*         FLOATING GLASS TABS (Royal Premium)        */
-    /* -------------------------------------------------- */
-
+    /* Floating Glass Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 18px !important;
         padding: 8px !important;
         margin-bottom: 18px !important;
-        justify-content: flex-start !important;
         border-bottom: none !important;
     }
 
@@ -155,15 +158,14 @@ st.markdown("""
         border: 1px solid rgba(255,255,255,0.08);
         color: #dcdcdc !important;
         font-size: 15px !important;
-        font-weight: 500 !important;
         transition: all 0.25s ease;
     }
 
     .stTabs [data-baseweb="tab"]:hover {
         color: #D4AF37 !important;
         border-color: rgba(212,175,55,0.45);
-        box-shadow: 0px 0px 8px rgba(212,175,55,0.25);
         transform: translateY(-3px);
+        box-shadow: 0px 0px 8px rgba(212,175,55,0.25);
     }
 
     .stTabs [aria-selected="true"] {
@@ -179,6 +181,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+
 # ------------------------------------------------------
 #                      HEADER
 # ------------------------------------------------------
@@ -187,7 +190,7 @@ st.markdown("""
     ECO AI Assistant
 </div>
 <div class="header-sub">
-    Teamcenter ECO Intelligence Dashboard 
+    Royal Premium ECO Intelligence Dashboard
 </div>
 <br>
 """, unsafe_allow_html=True)
@@ -247,6 +250,7 @@ with tabs[0]:
             st.write(d.get("summary", "No summary returned"))
         except:
             st.error("Invalid response from server.")
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -266,6 +270,7 @@ with tabs[1]:
             st.write(d.get("impact_analysis", "No analysis returned"))
         except:
             st.error("Invalid response from server.")
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -359,26 +364,68 @@ with tabs[3]:
 # ========================== TAB 5 ==========================
 with tabs[4]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("Insights & Analytics")
+    st.markdown('<div class="section-title">Insights & Analytics</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-muted">Impact distribution and executive risk gauges</div>', unsafe_allow_html=True)
+    st.markdown('<br/>', unsafe_allow_html=True)
 
-    df = pd.DataFrame([
-        {"impact": "High", "count": 12},
-        {"impact": "Medium", "count": 21},
-        {"impact": "Low", "count": 8}
+    # ---------------- FETCH COUNTS ----------------
+    eco_uid = st.text_input("ECO UID for insights (leave empty for sample)", value="")
+    counts = get_impact_counts_from_api(eco_uid if eco_uid.strip() else None)
+
+    df_counts = pd.DataFrame([
+        {"impact": "High", "count": counts.get("High", 0)},
+        {"impact": "Medium", "count": counts.get("Medium", 0)},
+        {"impact": "Low", "count": counts.get("Low", 0)}
     ])
 
-    chart = (
-        alt.Chart(df)
-        .mark_arc(innerRadius=50)
-        .encode(
-            theta=alt.Theta("count:Q"),
-            color=alt.Color("impact:N"),
-            tooltip=["impact", "count"]
-        )
-        .properties(width=360, height=360)
-    )
+    # ---------------- WEIGHTED RISK SCORE ----------------
+    overall_score = compute_weighted_risk(counts)
 
-    st.altair_chart(chart, use_container_width=False)
+    # ---------------- LAYOUT: LEFT (SVGs) + RIGHT (Altair charts) ----------------
+    left_col, right_col = st.columns([1, 1.3])
+
+    # ---------------- LEFT: MULTI-RING GAUGE + PROGRESS GAUGE ----------------
+    with left_col:
+        st.markdown("### Impact Rings")
+        svg_multi = render_multi_ring_svg(counts, size=360, stroke_widths=(20, 18, 16))
+        components.html(svg_multi, height=380)
+
+        st.markdown("<br/>", unsafe_allow_html=True)
+        st.markdown("### Overall Risk")
+        svg_prog = render_progress_gauge(overall_score, size=220)
+        components.html(svg_prog, height=230)
+
+    # ---------------- RIGHT: BAR + DONUT ----------------
+    with right_col:
+        st.markdown("### Distribution & Breakdown")
+        c1, c2 = st.columns([1, 0.9])
+
+        with c1:
+            bar = bar_chart_counts(df_counts)
+            st.altair_chart(bar, use_container_width=True)
+
+        with c2:
+            donut = donut_chart(df_counts)
+            st.altair_chart(donut, use_container_width=True)
+
+        # ---------------- LEGEND ----------------
+        st.markdown("<br/>", unsafe_allow_html=True)
+        st.markdown("<div style='display:flex; gap:12px; align-items:center;'>", unsafe_allow_html=True)
+
+        for k, col in [("High", THEME["gold"]), ("Medium", THEME["gold_deep"]), ("Low", THEME["muted"])]:
+            st.markdown(
+                f"""
+                <div style='display:flex; gap:8px; align-items:center;'>
+                    <div style='width:12px;height:12px;border-radius:4px;
+                                background:{col};box-shadow:0 0 8px {col};'></div>
+                    <div style='color:{THEME['text']}; font-weight:700'>{k}</div>
+                    <div style='color:{THEME['muted']}; margin-left:6px'>{counts.get(k,0)}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
