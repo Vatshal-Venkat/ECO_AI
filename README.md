@@ -76,12 +76,13 @@ source venv/bin/activate     # Linux/Mac
 venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 GOOGLE_API_KEY=your_gemini_api_key
+```
 
 # Required only if using real Teamcenter REST APIs
 TC_URL=http://teamcenter.server
 TC_USERNAME=username
 TC_PASSWORD=password
-```
+
 
 python init_db.py
 
@@ -100,5 +101,6 @@ streamlit run eco_ui.py
 Developed by Venkat Vatshal
 
 ECO AI Assistant — © 2025
+
 
 
