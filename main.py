@@ -7,6 +7,10 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
 from gemini_client import ask_gemini
+from mock_teamcenter import seed_mock_eco_1001
+from teamcenter_client import create_eco, get_eco_details
+
+
 
 # --- NEW Mock Teamcenter (your DB version) ---
 from mock_teamcenter import (
@@ -22,10 +26,17 @@ from mock_teamcenter import (
 # Safety Wrapper – ensures backend never returns raw strings
 # -------------------------------------------------------------
 def safe(result):
-    if isinstance(result, dict):
+    # Allow dicts and lists to pass through untouched
+    if isinstance(result, (dict, list)):
         return result
-    else:
-        return {"error": str(result)}
+
+    # None → empty list fallback
+    if result is None:
+        return []
+
+    # Anything else becomes an error
+    return {"error": str(result)}
+
 
 app = FastAPI()
 
@@ -124,6 +135,31 @@ def route_remove_item(eco_uid: str, item_uid: str):
 @app.get("/tc/eco/all")
 def route_get_all_ecos():
     return safe(list_all_ecos())
+
+
+@app.post("/tc/eco/seed_1001")
+async def seed_1001():
+    return seed_mock_eco_1001()
+
+
+@app.post("/eco/create")
+async def create_eco_api(data: dict):
+    return create_eco(
+        change_id=data["change_id"],
+        title=data["title"],
+        description=data["description"],
+        datasets=data["datasets"],
+        bom_list=data["bom"]
+    )
+
+
+@app.get("/eco/{change_id}")
+async def get_details(change_id: str):
+    details = get_eco_details(change_id)
+    if details:
+        return details
+    return {"error": "ECO not found"}
+
 
 # ==================================================================
 # ATTACH FILE (Mock Mode Only)
