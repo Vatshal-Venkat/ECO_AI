@@ -6,6 +6,8 @@
     background: linear-gradient(180deg, #0a0c12 0%, #05070a 100%) !important;
 }
 
+
+
 /* Sidebar */
 [data-testid="stSidebar"] {
     background: #0d1017 !important;
@@ -139,3 +141,30 @@
     transform: translateY(-3px);
 }
 
+/* === CINEMATIC GOLD PARTICLE FLOW === */
+.particle-flow {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    width: 320px;
+    height: 180px;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.particle-gold {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, #FFD67A, #D4AF37);
+    box-shadow: 0 0 10px rgba(212,175,55,0.9), 0 0 18px rgba(212,175,55,0.5);
+    opacity: 0.85;
+    animation: drift 6s infinite ease-in-out;
+}
+
+@keyframes drift {
+    0%   { transform: translate(0px, 0px) scale(0.8); opacity: 0.6; }
+    25%  { transform: translate(-12px, -18px) scale(1.1); opacity: 1; }
+    50%  { transform: translate(10px, -6px) scale(0.9); opacity: 0.7; }
+    75%  { transform: translate(-6px, 12px) scale(1.05); opacity: 0.9; }
+    100% { transform: translate(0px, 0px) scale(0.8); opacity: 0.6; }
+}
