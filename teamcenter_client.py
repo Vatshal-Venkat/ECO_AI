@@ -83,8 +83,6 @@ def add_impacted_item(eco_uid: str, item_uid: str):
     response = requests.post(url, auth=AUTH, json=payload)
     return response.json()
 
-
-
 # ---------------------------------------------------------
 # 5️⃣ REMOVE IMPACTED / AFFECTED ITEM
 # ---------------------------------------------------------
