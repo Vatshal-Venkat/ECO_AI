@@ -128,5 +128,5 @@ def ask_gemini(prompt: str):
             print(f"❌ Unexpected Gemini error: {e}")
             return "❌ Gemini API failed unexpectedly. Check logs."
 
-    # If all retries fail:
+   
     return "❌ Gemini API is overloaded. Try again later."
