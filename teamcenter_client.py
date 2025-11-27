@@ -7,9 +7,9 @@ from db import get_db
 # ---------------------------------------------------------
 # Load Teamcenter Credentials from .env
 # ---------------------------------------------------------
-TC_URL = os.getenv("TC_URL")              # Example: http://your-tc-server:8080
-TC_USERNAME = os.getenv("TC_USERNAME")    # TC user
-TC_PASSWORD = os.getenv("TC_PASSWORD")    # TC password
+TC_URL = os.getenv("TC_URL")              
+TC_USERNAME = os.getenv("TC_USERNAME")    
+TC_PASSWORD = os.getenv("TC_PASSWORD")    
 
 if not TC_URL:
     raise ValueError("❌ TC_URL is missing in .env")
