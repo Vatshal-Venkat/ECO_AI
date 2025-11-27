@@ -93,7 +93,7 @@ def add_impacted_item(eco_uid: str, item_uid: str):
 
     eco["impacted_items"].append({
         "item": item_uid,
-        "impact": "Medium"  # default impact for mock
+        "impact": "Medium"  
     })
 
     eco["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
