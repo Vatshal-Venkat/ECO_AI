@@ -2,6 +2,8 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 
+from db import get_db
+
 # ---------------------------------------------------------
 # Load Teamcenter Credentials from .env
 # ---------------------------------------------------------
@@ -139,3 +141,49 @@ def attach_file(eco_uid: str, file_path: str):
         "upload": upload_res,
         "relation": relation_res
     }
+
+
+
+def create_eco(change_id, title, description, datasets, bom_list):
+    db = get_db()
+
+    # Insert into main table
+    db.execute("""
+        INSERT OR REPLACE INTO eco_master (change_id, title, description, datasets)
+        VALUES (?, ?, ?, ?)
+    """, (change_id, title, description, ",".join(datasets)))
+
+    # Insert BOM table
+    db.execute("DELETE FROM eco_bom WHERE change_id=?", (change_id,))
+    for item_data in bom_list:
+        db.execute("""
+            INSERT INTO eco_bom (change_id, item, impact)
+            VALUES (?, ?, ?)
+        """, (change_id, item_data["item"], item_data["impact"]))
+
+    db.commit()
+    db.close()
+
+    return {"status": "success", "change_id": change_id}
+
+
+
+def get_eco_details(change_id: str):
+    db = get_db()
+
+    eco = db.execute("SELECT * FROM eco_master WHERE change_id=?", (change_id,)).fetchone()
+    if not eco:
+        return None
+
+    bom = db.execute("SELECT item, impact FROM eco_bom WHERE change_id=?", (change_id,)).fetchall()
+
+    db.close()
+
+    return {
+        "change_id": eco["change_id"],
+        "title": eco["title"],
+        "description": eco["description"],
+        "datasets": eco["datasets"].split(","),
+        "bom": [dict(row) for row in bom]
+    }
+

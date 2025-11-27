@@ -34,7 +34,7 @@ def create_eco(payload: dict):
         "title": title,
         "description": desc,
         "revision": "A",
-        "creator": "vatshal@company.com",  # mock creator
+        "creator": "Vatshal@celerinnTech", 
         "created_at": timestamp,
         "updated_at": timestamp,
         "status": "Created",
@@ -128,3 +128,35 @@ def remove_impacted_item(eco_uid: str, item_uid: str):
 def list_all_ecos():
     """Return all ECOs for listing page."""
     return list(MOCK_DB.values())
+
+
+
+
+def seed_mock_eco_1001():
+    """Insert predefined ECO 1001 into the mock DB."""
+    eco_uid = "ECO-1001"
+
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    eco_record = {
+        "eco_uid": eco_uid,
+        "title": "Modify bracket thickness",
+        "description": "Increase thickness from 3mm to 4mm for durability.",
+        "revision": "A",
+        "creator": "vatshal@company.com",
+        "created_at": timestamp,
+        "updated_at": timestamp,
+        "status": "Created",
+
+        # Old BOM converted into new structure
+        "impacted_items": [
+            {"item": "A1001", "impact": "High"},
+            {"item": "A1002", "impact": "Low"}
+        ],
+
+        # Old dataset values
+        "datasets": ["CAD", "Drawing"],
+    }
+
+    MOCK_DB[eco_uid] = eco_record
+    return eco_record

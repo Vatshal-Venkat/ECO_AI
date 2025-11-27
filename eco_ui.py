@@ -1,4 +1,4 @@
-# eco_ui.py — Royal Premium Dashboard Edition (Optimized)
+# eco_ui.py — Royal Premium Dashboard Edition (Optimized & Patched)
 
 import streamlit as st
 import requests
@@ -20,11 +20,13 @@ from eco_insights_utils import (
 
 API_BASE = "http://127.0.0.1:8000"
 
+
 # --------------------------------------
 # Load external CSS
 # --------------------------------------
 with open("eco_ui.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 
 # --------------------------------------
 # Page Config
@@ -36,6 +38,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+
 # --------------------------------------
 # Header
 # --------------------------------------
@@ -44,6 +47,7 @@ st.markdown("""
 <div class="header-sub">Royal Premium ECO Intelligence Dashboard</div>
 <br>
 """, unsafe_allow_html=True)
+
 
 # --------------------------------------
 # KPI Row
@@ -65,6 +69,7 @@ for col, (title, value) in zip([c1, c2, c3, c4], kpi_data):
         </div>
         """, unsafe_allow_html=True)
 
+
 # --------------------------------------
 # Tabs
 # --------------------------------------
@@ -77,6 +82,7 @@ tabs = st.tabs([
     "ECO List"
 ])
 
+
 # --------------------------------------
 # TAB 1 — Summary
 # --------------------------------------
@@ -84,9 +90,9 @@ with tabs[0]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("ECO Summarizer")
 
-    eco_id = st.text_input("Enter ECO ID", "1001")
+    eco_id = st.text_input("Enter ECO ID", "1001", key="summary_eco_id")
 
-    if st.button("Generate Summary"):
+    if st.button("Generate Summary", key="summary_btn"):
         r = requests.get(f"{API_BASE}/eco/{eco_id}/summarize")
         try:
             d = r.json()
@@ -97,6 +103,7 @@ with tabs[0]:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
+
 # --------------------------------------
 # TAB 2 — Impact
 # --------------------------------------
@@ -104,9 +111,9 @@ with tabs[1]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("Impact Analysis")
 
-    eco_id2 = st.text_input("ECO ID for Impact", "1001")
+    eco_id2 = st.text_input("ECO ID for Impact", "1001", key="impact_eco_id")
 
-    if st.button("Run Impact Analysis"):
+    if st.button("Run Impact Analysis", key="impact_btn"):
         r = requests.get(f"{API_BASE}/eco/{eco_id2}/impact")
         try:
             d = r.json()
@@ -116,6 +123,7 @@ with tabs[1]:
             st.error("Invalid response from server.")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 # --------------------------------------
 # TAB 3 — Teamcenter Operations
@@ -127,22 +135,20 @@ with tabs[2]:
     left, right = st.columns([1.3, 1])
 
     with left:
-        tc_action = st.radio("Select Action", [
-            "Create ECO",
-            "Get ECO Details",
-            "Update ECO Status",
-            "Add Impacted Item",
-            "Remove Impacted Item"
-        ])
+        tc_action = st.radio(
+            "Select Action",
+            ["Create ECO", "Get ECO Details", "Update ECO Status", "Add Impacted Item", "Remove Impacted Item"],
+            key="tc_action"
+        )
 
-        # CREATE ECO
+        # -------------------- CREATE ECO --------------------
         if tc_action == "Create ECO":
             st.subheader("Create New ECO")
 
-            tc_title = st.text_input("ECO Title")
-            tc_desc = st.text_area("ECO Description")
+            tc_title = st.text_input("ECO Title", key="tc_title")
+            tc_desc = st.text_area("ECO Description", key="tc_desc")
 
-            if st.button("Create ECO"):
+            if st.button("Create ECO", key="tc_create_btn"):
                 payload = {
                     "clientId": "UI_ECO_CREATE",
                     "className": "ChangeNoticeRevision",
@@ -156,49 +162,61 @@ with tabs[2]:
                 try:
                     out = r.json()
                     st.session_state["log"] = out
-                    eco_uid = out.get("eco_uid") or out.get("uid")
-                    st.success(f"ECO Created Successfully! UID: {eco_uid}")
+                    eco_uid = out.get("eco_uid")
+                    st.success(f"ECO Created Successfully: {eco_uid}")
                     st.json(out)
                 except:
                     st.error("Error processing response")
                     st.code(r.text)
 
-        # GET DETAILS
+        # -------------------- GET DETAILS --------------------
         elif tc_action == "Get ECO Details":
-            uid = st.text_input("ECO UID")
-            if st.button("Fetch"):
+            uid = st.text_input("ECO UID", key="tc_get_uid")
+
+            if st.button("Fetch Details", key="fetch_tc_details"):
                 r = requests.get(f"{API_BASE}/tc/eco/{uid}")
                 st.session_state["log"] = r.json()
 
-        # UPDATE STATUS
+        # -------------------- UPDATE STATUS --------------------
         elif tc_action == "Update ECO Status":
-            uid = st.text_input("ECO UID")
-            act = st.selectbox("Action", ["Promote", "Demote"])
-            if st.button("Update"):
+            uid = st.text_input("ECO UID", key="tc_update_uid")
+            act = st.selectbox("Action", ["Promote", "Demote"], key="tc_update_action")
+
+            if st.button("Update Status", key="update_status_btn"):
                 r = requests.post(f"{API_BASE}/tc/eco/{uid}/status", params={"action": act})
                 st.session_state["log"] = r.json()
 
-        # ADD ITEM
+        # -------------------- ADD ITEM --------------------
         elif tc_action == "Add Impacted Item":
-            uid = st.text_input("ECO UID")
-            item = st.text_input("Item UID")
-            if st.button("Add"):
+            uid = st.text_input("ECO UID", key="tc_add_uid")
+            item = st.text_input("Item UID", key="tc_add_item_uid")
+
+            if st.button("Add Item", key="tc_add_item_btn"):
                 r = requests.post(f"{API_BASE}/tc/eco/{uid}/add_item/{item}")
                 st.session_state["log"] = r.json()
 
-        # REMOVE ITEM
+        # -------------------- REMOVE ITEM --------------------
         elif tc_action == "Remove Impacted Item":
-            uid = st.text_input("ECO UID")
-            item = st.text_input("Item UID")
-            if st.button("Remove"):
+            uid = st.text_input("ECO UID", key="tc_remove_uid")
+            item = st.text_input("Item UID", key="tc_remove_item_uid")
+
+            if st.button("Remove Item", key="tc_remove_item_btn"):
                 r = requests.post(f"{API_BASE}/tc/eco/{uid}/remove_item/{item}")
                 st.session_state["log"] = r.json()
 
+    # RIGHT COLUMN LOG VIEW
     with right:
-        st.subheader("Live Response")
-        st.json(st.session_state.get("log", "No actions yet."))
+        st.subheader("Live Response / Logs")
+
+        log = st.session_state.get("log")
+
+        if isinstance(log, dict):
+            st.json(log)
+        else:
+            st.info("No actions yet.")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 # --------------------------------------
 # TAB 4 — Attachments
@@ -207,16 +225,17 @@ with tabs[3]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("Attach Files")
 
-    eco_uid = st.text_input("ECO UID")
-    file = st.file_uploader("Upload File")
+    eco_uid = st.text_input("ECO UID", key="attach_eco_uid")
+    file = st.file_uploader("Upload File", key="attach_file")
 
-    if st.button("Upload"):
+    if st.button("Upload", key="attach_btn"):
         if eco_uid and file:
             st.success("Uploaded successfully (mock).")
         else:
-            st.error("ECO UID and file required.")
+            st.error("ECO UID + File required.")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 # --------------------------------------
 # TAB 5 — Insights
@@ -226,13 +245,14 @@ with tabs[4]:
     st.subheader("Insights & Analytics")
     st.markdown('<br/>', unsafe_allow_html=True)
 
-    eco_uid_insight = st.text_input("ECO UID for insights", value="")
+    eco_uid_insight = st.text_input("ECO UID for insights", key="insights_uid")
+
     counts = get_impact_counts_from_api(eco_uid_insight or None)
 
     df_counts = pd.DataFrame([
         {"impact": "High", "count": counts.get("High", 0) if isinstance(counts, dict) else 0},
         {"impact": "Medium", "count": counts.get("Medium", 0)},
-        {"impact": "Low", "count": counts.get("Low", 0)}
+        {"impact": "Low", "count": counts.get("Low", 0)},
     ])
 
     overall_score = compute_weighted_risk(counts)
@@ -241,12 +261,10 @@ with tabs[4]:
 
     with left_col:
         st.markdown("### Impact Rings")
-        svg_multi = render_multi_ring_svg(counts)
-        components.html(svg_multi, height=380)
+        components.html(render_multi_ring_svg(counts), height=380)
 
         st.markdown("### Overall Risk")
-        svg_prog = render_progress_gauge(overall_score)
-        components.html(svg_prog, height=230)
+        components.html(render_progress_gauge(overall_score), height=230)
 
     with right_col:
         st.markdown("### Distribution & Breakdown")
@@ -255,45 +273,32 @@ with tabs[4]:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ========================== TAB 6 — ECO LIST ==========================
+
+# --------------------------------------
+# TAB 6 — ECO LIST
+# --------------------------------------
 with tabs[5]:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("📘 ECO Database")
 
-    search_query = st.text_input("Search ECO by ID", placeholder="ECO-2025-0001")
+    search_query = st.text_input("Search ECO by ID", key="search_eco")
 
-    # Fetch DB content
     try:
         ecos = requests.get(f"{API_BASE}/tc/eco/all").json()
     except:
         ecos = []
 
-    # Ensure list, not string
-    if isinstance(ecos, dict) and "error" in ecos:
-        st.error(ecos["error"])
-        st.markdown('</div>', unsafe_allow_html=True)
-        st.stop()
-
     if not isinstance(ecos, list):
-        st.error(f"Backend returned invalid format: {ecos}")
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.error("Invalid backend response")
         st.stop()
 
-    # Filter
+    # filter
     if search_query.strip():
-        ecos = [eco for eco in ecos 
-                if isinstance(eco, dict) 
-                and search_query.lower() in eco.get("eco_uid", "").lower()]
+        ecos = [e for e in ecos if isinstance(e, dict) and search_query.lower() in e.get("eco_uid", "").lower()]
 
     st.success(f"{len(ecos)} ECO(s) found")
 
-    # Show list
     for eco in ecos:
-
-        if not isinstance(eco, dict):
-            st.error(f"Invalid entry: {eco}")
-            continue
-
         status = eco.get("status", "Created")
 
         color = (
@@ -304,7 +309,8 @@ with tabs[5]:
 
         with st.expander(f"🔧 {eco.get('eco_uid')} — {eco.get('title')}"):
             st.markdown(
-                f"<span style='background:{color};padding:4px 10px;border-radius:8px;color:white;font-weight:700;font-size:12px;'>{status}</span>",
+                f"<span style='background:{color};padding:4px 10px;border-radius:8px;"
+                f"color:white;font-weight:700;font-size:12px;'>{status}</span>",
                 unsafe_allow_html=True
             )
 
@@ -315,7 +321,7 @@ with tabs[5]:
             st.write(f"**Description:** {eco.get('description')}")
 
             items = eco.get("impacted_items", [])
-            if isinstance(items, list) and items:
+            if items:
                 st.markdown("### Impacted Items")
                 st.table(items)
             else:
@@ -330,6 +336,6 @@ with tabs[5]:
 st.markdown("""
 <br>
 <center><span style="color:#666; font-size:12px;">
-ECO AI Assistant — Royal Premium Dashboard © 2025
+ECO AI Assistant — ECO Dashboard © 2025
 </span></center>
 """, unsafe_allow_html=True)
