@@ -111,7 +111,7 @@ def render_multi_ring_svg(counts: Dict[str, int], size=360, stroke_widths=(20, 1
     return svg
 
 
-# ------- PROGRESS GAUGE -------
+# -- PROGRESS GAUGE --
 def render_progress_gauge(score, size=220):
     score = max(0, min(100, score))
     cx = cy = size // 2
