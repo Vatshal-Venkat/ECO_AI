@@ -20,6 +20,22 @@ from eco_insights_utils import (
 
 API_BASE = "http://127.0.0.1:8000"
 
+st.markdown('''
+<div class="particle-flow">
+    <div class="particle-gold" style="width:9px; height:9px; top:10px; left:30px; animation-delay:0s;"></div>
+    <div class="particle-gold" style="width:6px; height:6px; top:50px; left:80px; animation-delay:0.3s;"></div>
+    <div class="particle-gold" style="width:12px; height:12px; top:90px; left:20px; animation-delay:0.6s;"></div>
+    <div class="particle-gold" style="width:7px; height:7px; top:40px; left:160px; animation-delay:0.9s;"></div>
+    <div class="particle-gold" style="width:10px; height:10px; top:110px; left:120px; animation-delay:1.2s;"></div>
+    <div class="particle-gold" style="width:5px; height:5px; top:70px; left:200px; animation-delay:1.5s;"></div>
+    <div class="particle-gold" style="width:8px; height:8px; top:25px; left:260px; animation-delay:1.8s;"></div>
+    <div class="particle-gold" style="width:11px; height:11px; top:130px; left:180px; animation-delay:2.1s;"></div>
+    <div class="particle-gold" style="width:6px; height:6px; top:100px; left:240px; animation-delay:2.4s;"></div>
+    <div class="particle-gold" style="width:9px; height:9px; top:55px; left:300px; animation-delay:2.7s;"></div>
+</div>
+''', unsafe_allow_html=True)
+
+
 
 # --------------------------------------
 # Load external CSS
@@ -339,3 +355,4 @@ st.markdown("""
 ECO AI Assistant — ECO Dashboard © 2025
 </span></center>
 """, unsafe_allow_html=True)
+
