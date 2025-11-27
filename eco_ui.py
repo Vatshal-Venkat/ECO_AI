@@ -44,7 +44,7 @@ st.set_page_config(
 # --------------------------------------
 st.markdown("""
 <div class="header-title">ECO AI Assistant</div>
-<div class="header-sub">Royal Premium ECO Intelligence Dashboard</div>
+<div class="header-sub">Intelligence Dashboard</div>
 <br>
 """, unsafe_allow_html=True)
 
