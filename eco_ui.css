@@ -1,0 +1,141 @@
+/* ------------------------------------------------------
+   Royal Premium ECO AI CSS Theme
+   ------------------------------------------------------ */
+
+/* Global background */
+.stApp {
+    background: linear-gradient(180deg, #0a0c12 0%, #05070a 100%) !important;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background: #0d1017 !important;
+    border-right: 1px solid rgba(212,175,55,0.18) !important;
+    padding-top: 20px;
+}
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span {
+    color: #D4AF37 !important;
+    font-size: 15px !important;
+}
+[data-testid="stSidebar"] .css-1d391kg:hover {
+    color: #f6d46e !important;
+    text-shadow: 0px 0px 6px rgba(212,175,55,0.6);
+}
+
+/* Main Header */
+.header-title {
+    font-size: 40px;
+    font-weight: 900;
+    color: #D4AF37;
+    text-shadow: 0px 0px 12px rgba(212,175,55,0.45);
+    animation: fadein 1.2s ease-out;
+    letter-spacing: 1px;
+}
+.header-sub {
+    margin-top: -10px;
+    font-size: 15px;
+    color: #8C93A1;
+}
+
+/* KPI Cards */
+.kpi-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(212,175,55,0.25);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
+    padding: 22px;
+    transition: 0.25s ease;
+}
+.kpi-card:hover {
+    border-color: rgba(212,175,55,0.60);
+    transform: translateY(-4px);
+    box-shadow: 0px 0px 12px rgba(212,175,55,0.35);
+}
+.kpi-title {
+    font-size: 13px;
+    color: #D4AF37;
+    font-weight: 700;
+}
+.kpi-value {
+    font-size: 30px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-top: -6px;
+}
+
+/* Card Container */
+.card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(6px);
+    transition: 0.28s ease;
+    margin-bottom: 22px;
+}
+.card:hover {
+    border: 1px solid rgba(212,175,55,0.45);
+    box-shadow: 0px 0px 20px rgba(212,175,55,0.20);
+    transform: translateY(-5px);
+}
+
+/* Buttons */
+.stButton > button {
+    background: linear-gradient(90deg, #D4AF37 0%, #b8922c 100%);
+    border-radius: 12px;
+    padding: 10px 20px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    transition: 0.25s;
+    color: #000 !important;
+}
+.stButton > button:hover {
+    background: linear-gradient(90deg, #f4d98c 0%, #d0a747 100%);
+    transform: translateY(-3px);
+    box-shadow: 0px 0px 12px rgba(212,175,55,0.40);
+}
+
+/* File Upload */
+[data-testid="stFileUploadDropzone"] {
+    background: rgba(255,255,255,0.03);
+    border: 2px dashed #D4AF37;
+    border-radius: 14px;
+}
+
+/* Floating Tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 18px !important;
+    padding: 8px !important;
+    margin-bottom: 18px !important;
+    border-bottom: none !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    padding: 10px 20px !important;
+    border-radius: 14px !important;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #dcdcdc !important;
+    font-size: 15px !important;
+    transition: all 0.25s ease;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    color: #D4AF37 !important;
+    border-color: rgba(212,175,55,0.45);
+    transform: translateY(-3px);
+    box-shadow: 0px 0px 8px rgba(212,175,55,0.25);
+}
+
+.stTabs [aria-selected="true"] {
+    color: #D4AF37 !important;
+    background: rgba(212,175,55,0.08) !important;
+    border: 1px solid rgba(212,175,55,0.45) !important;
+    box-shadow: 0px 0px 16px rgba(212,175,55,0.35);
+    font-weight: 800 !important;
+    transform: translateY(-3px);
+}
+
