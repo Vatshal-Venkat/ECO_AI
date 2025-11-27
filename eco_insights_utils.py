@@ -7,7 +7,7 @@ import pandas as pd
 import streamlit.components.v1 as components
 from typing import Dict
 
-# API Base (imported by eco_ui)
+
 API_BASE = "http://127.0.0.1:8000"
 
 
