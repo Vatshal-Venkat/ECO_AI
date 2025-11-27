@@ -1,0 +1,72 @@
+# -----------------------------
+# Python cache / build files
+# -----------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+build/
+dist/
+
+# -----------------------------
+# Virtual environments
+# -----------------------------
+env/
+venv/
+.venv/
+
+# -----------------------------
+# Database & local storage
+# -----------------------------
+eco.db
+*.sqlite3
+*.db
+*.db-journal
+
+# -----------------------------
+# Streamlit specific
+# -----------------------------
+.streamlit/
+logs/
+cache/
+static/
+
+# -----------------------------
+# VSCode / Editors
+# -----------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -----------------------------
+# OS files
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# Python compiled models / misc
+# -----------------------------
+*.model
+*.bin
+*.h5
+
+# -----------------------------
+# Environment variables
+# -----------------------------
+.env
+*.env
+
+# -----------------------------
+# Jupyter / Debug
+# -----------------------------
+.ipynb_checkpoints/
+debug.log
+
+# -----------------------------
+# Node / Frontend (if used)
+# -----------------------------
+node_modules/
