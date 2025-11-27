@@ -10,10 +10,6 @@ from gemini_client import ask_gemini
 from mock_teamcenter import seed_mock_eco_1001
 from teamcenter_client import create_eco, get_eco_details
 
-
-
-
-
 # --- NEW Mock Teamcenter (your DB version) ---
 from mock_teamcenter import (
     create_eco,
